@@ -18,12 +18,12 @@
   "description": "",
   "dependencies": {
     "axios": "^1.8.4",
-    "bootstrap": "^5.3.5",
+    "bootstrap": "^5.3.0",
     "express": "^5.1.0",
     "mongoose": "^8.13.2",
     "nodemon": "^3.1.9",
     "react": "^19.1.0",
-    "react-bootstrap": "^2.10.9",
+    "react-bootstrap": "^2.7.4",
     "react-router-dom": "^7.5.1",
     "router": "^2.2.0"
   }
