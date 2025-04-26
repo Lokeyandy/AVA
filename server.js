@@ -1,12 +1,12 @@
 const express = require("express");
-
 const app = express();
+const dbConfig = require("./db"); // MongoDB connection file
+const roomsRoute = require("./routes/roomsRoute");
 
-const dbConfig = require('./db')
-const roomsRoute = require('./routes/roomsRoute')
+app.use(express.json());
 
-app.use('/api/rooms' , roomsRoute)
+// Mount rooms routes under /api/rooms
+app.use("/api/rooms", roomsRoute);
 
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log('Node Server Started using nodemod'));
+app.listen(port, () => console.log(`Node Server Started on port ${port}`));
