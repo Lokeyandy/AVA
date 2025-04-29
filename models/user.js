@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true, // ✅ Add this
     },
     password: {
       type: String,
@@ -24,6 +25,5 @@ const userSchema = mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
-
+const User = mongoose.model("users", userSchema); // lowercase collection name
 module.exports = User;

@@ -1,29 +1,34 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user"); // ONLY import User model
+const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
-// Register route
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    const newUser = new User({ name, email, password });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
     res.send("User Registered Successfully");
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ error });
+    console.error("Registration error:", error);
+    return res.status(400).json({ message: "Registration Failed", error });
   }
 });
 
-// Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email });
 
-    if (user) {
+    if (user && await bcrypt.compare(password, user.password)) {
       const temp = {
         name: user.name,
         email: user.email,
@@ -32,12 +37,13 @@ router.post("/login", async (req, res) => {
       };
       res.send(temp);
     } else {
-      return res.status(400).json({ message: "Login failed" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ error });
+    console.error("Login error:", error);
+    return res.status(400).json({ message: "Login Failed", error });
   }
 });
 
+// ✅ This line MUST be here
 module.exports = router;

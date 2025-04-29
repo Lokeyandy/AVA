@@ -24,33 +24,39 @@ router.get("/getroombyid/:roomid", async (req, res) => {
   }
 });
 
-// NEW Route: POST to get available rooms by date range
-router.post("/getallrooms", async (req, res) => {
+// Route: POST to get available rooms by date range
+router.post("/getavailable", async (req, res) => {
   const { fromdate, todate } = req.body;
+
+  const selectedFrom = moment(fromdate, "MM-DD-YYYY").startOf("day");
+  const selectedTo = moment(todate, "MM-DD-YYYY").endOf("day");
 
   try {
     const rooms = await Room.find({});
 
     const availableRooms = rooms.filter((room) => {
-      let availability = true;
+      let isAvailable = true;
 
       for (const booking of room.currentbookings) {
+        const bookedFrom = moment(booking.fromdate, "YYYY-MM-DD").startOf("day");
+        const bookedTo = moment(booking.todate, "YYYY-MM-DD").endOf("day");
+
         if (
-          moment(fromdate).isBetween(booking.fromdate, booking.todate) ||
-          moment(todate).isBetween(booking.fromdate, booking.todate) ||
-          moment(booking.fromdate).isBetween(fromdate, todate) ||
-          moment(booking.todate).isBetween(fromdate, todate)
+          selectedFrom.isSameOrBefore(bookedTo) &&
+          selectedTo.isSameOrAfter(bookedFrom)
         ) {
-          availability = false;
+          isAvailable = false;
+          break;
         }
       }
 
-      return availability;
+      return isAvailable;
     });
 
     res.send(availableRooms);
-  } catch (error) {
-    return res.status(400).json({ message: error });
+  } catch (err) {
+    console.error("Error checking availability:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
