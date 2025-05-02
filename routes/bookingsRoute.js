@@ -14,6 +14,7 @@ router.post("/bookroom", async (req, res) => {
     totalamount,
     totaldays,
     transactionId,
+    paymentDetails,
   } = req.body;
 
   try {
@@ -46,6 +47,7 @@ router.post("/bookroom", async (req, res) => {
       totalamount,
       totaldays,
       transactionId,
+      paymentDetails,
       status: "booked",
     });
 
@@ -65,6 +67,18 @@ router.post("/bookroom", async (req, res) => {
   } catch (error) {
     console.error("Booking error:", error);
     res.status(500).json({ message: "Booking Failed", error });
+  }
+});
+
+router.post("/getuserbookings", async (req, res) => {
+  const { userid } = req.body;
+
+  try {
+    const bookings = await Booking.find({ userid });
+    res.send(bookings);
+  } catch (err) {
+    console.error("Get bookings error:", err);
+    return res.status(400).json({ message: "Error fetching user bookings", error: err });
   }
 });
 
