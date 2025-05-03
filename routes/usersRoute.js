@@ -45,5 +45,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ✅ This line MUST be here
+// ✅ NEW ROUTE FOR ADMIN PANEL
+router.get("/getallusers", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(400).json({ message: "Failed to get users", error });
+  }
+});
+
 module.exports = router;

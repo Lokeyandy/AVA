@@ -3,7 +3,31 @@ const router = express.Router();
 const Room = require("../models/room");
 const moment = require("moment");
 
-// Route: GET all rooms (basic fetch)
+// ✅ Route: Add a new room
+router.post("/addroom", async (req, res) => {
+  try {
+    const newroom = req.body;
+
+    const room = new Room({
+      name: newroom.name,
+      rentperday: newroom.rentperday,
+      maxcount: newroom.maxcount,
+      description: newroom.description,
+      phonenumber: newroom.phonenumber,
+      type: newroom.type,
+      imageurls: newroom.imageurls,
+      currentbookings: [], // initialize empty array
+    });
+
+    await room.save();
+    res.send("New room added successfully");
+  } catch (error) {
+    console.error("Add Room Error:", error);
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+// Route: GET all rooms
 router.get("/getallrooms", async (req, res) => {
   try {
     const rooms = await Room.find({});

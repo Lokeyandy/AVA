@@ -1,26 +1,32 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
 const dbConfig = require("./db");
 
-const bookingsRoute = require("./routes/bookingsRoute");
+const app = express();
+
+// Routes
 const roomsRoute = require("./routes/roomsRoute");
-const usersRoute = require("./routes/usersRoute"); // ✅ Add this line
-
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
-
+const usersRoute = require("./routes/usersRoute");
+const bookingsRoute = require("./routes/bookingsRoute");
+// Middleware
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
+// Mount routes
 app.use("/api/rooms", roomsRoute);
+app.use("/api/users", usersRoute);
 app.use("/api/bookings", bookingsRoute);
-app.use("/api/users", usersRoute); // ✅ Mount the route
+app.get("/api/bookings/test", (req, res) => {
+  res.send("bookingsRoute is working");
+});
 
+// Basic test route
 app.get("/test", (req, res) => {
-  res.send("Direct server test works!");
+  res.send("Server is running");
+});
+
+app.get("/ping", (req, res) => {
+  res.send("pong");
 });
 
 const port = process.env.PORT || 5000;
